@@ -52,3 +52,13 @@ test-output
 .nx/polygraph
 .nx/self-healing
 .nx/migrate-runs
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Next.js
+.next
+out

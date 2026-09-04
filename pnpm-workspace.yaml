@@ -1,5 +1,10 @@
 packages:
   - 'apps/*'
-  - 'packages/api/products'
-  - 'packages/shared/*'
-  - 'packages/shop/*'
+  - 'packages/*'
+  - 'packages/**'
+
+allowBuilds:
+  '@scarf/scarf': false
+  sharp: true
+  esbuild: true
+  '@parcel/watcher': true

@@ -1,0 +1,21 @@
+'area: frontend':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/web/**'
+
+'area: backend':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/api/**'
+
+'area: packages':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/**'
+
+'area: ci-cd':
+  - changed-files:
+      - any-glob-to-any-file: '.github/**'
+
+'area: docs':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**'
+          - '*.md'
