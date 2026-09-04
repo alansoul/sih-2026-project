@@ -2,5 +2,42 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./packages/shop/feature-product-detail"
+    },
+    {
+      "path": "./packages/shop/feature-products"
+    },
+    {
+      "path": "./packages/shared/test-utils"
+    },
+    {
+      "path": "./packages/shop/shared-ui"
+    },
+    {
+      "path": "./packages/shared/models"
+    },
+    {
+      "path": "./packages/api/products"
+    },
+    {
+      "path": "./packages/shop/data"
+    },
+    {
+      "path": "./apps/shop-e2e"
+    },
+    {
+      "path": "./apps/web-e2e"
+    },
+    {
+      "path": "./apps/shop"
+    },
+    {
+      "path": "./apps/api"
+    },
+    {
+      "path": "./apps/web"
+    }
+  ]
 }
