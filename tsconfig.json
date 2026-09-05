@@ -38,6 +38,27 @@
     },
     {
       "path": "./apps/web"
+    },
+    {
+      "path": "./packages/shared/types"
+    },
+    {
+      "path": "./packages/screening/data-access"
+    },
+    {
+      "path": "./packages/shared/ui"
+    },
+    {
+      "path": "./packages/screening/feature-analytics"
+    },
+    {
+      "path": "./packages/screening/feature-scanner"
+    },
+    {
+      "path": "./packages/screening/feature-audit-trail"
+    },
+    {
+      "path": "./packages/screening/feature-forensics"
     }
   ]
 }
