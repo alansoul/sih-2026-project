@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth, RedirectToSignIn } from '@clerk/nextjs';
 import { DashboardNav } from '../../components/dashboard/dashboard-nav';
 import { StatsOverview } from '../../components/dashboard/stats-overview';
 import { DocumentIngestSidebar, PresetItem } from '../../components/dashboard/document-ingest-sidebar';
@@ -60,6 +61,13 @@ const INITIAL_LOGS: AuditLogItem[] = [
 ];
 
 export default function BorderScreeningDashboard() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  // Redirect to Clerk sign-in if an unauthenticated visitor enters /dashboard
+  if (isLoaded && !isSignedIn) {
+    return <RedirectToSignIn />;
+  }
+
   const [docType, setDocType] = useState('PASSPORT');
   const [docUrl, setDocUrl] = useState(DEMO_PRESETS[0].url);
   const [loading, setLoading] = useState(false);
@@ -96,7 +104,7 @@ export default function BorderScreeningDashboard() {
     await new Promise((r) => setTimeout(r, 300));
 
     try {
-      // 1. Attempt to hit the live NestJS backend API
+      // 1. Attempt to call live NestJS backend
       const res = await axios.post(`${API_BASE}/screening/analyze`, {
         documentType: docType,
         documentImageUrl: docUrl,
@@ -119,7 +127,7 @@ export default function BorderScreeningDashboard() {
         ...prev,
       ]);
     } catch {
-      // 2. Client-side fallback if backend is offline/cold-starting
+      // 2. Client-side fallback if backend is offline or cold-starting
       const isVisaFraud = docUrl.includes('1589829545856') || docType === 'VISA';
       const isSuspicious = docUrl.includes('1578632767115');
 
@@ -143,6 +151,26 @@ export default function BorderScreeningDashboard() {
             mrzCode: 'V<FRAVANCE<<MICHAEL<<<<<<<<<<<<<<<<<<<\nV499201946FRA8204123M2811204<<<<<<<<<<<<<<02',
             mrzChecksumValid: false,
           },
+          registryComparison: {
+            matchedInDatabase: true,
+            registryRecord: {
+              officialName: 'UNKNOWN PERSON',
+              officialDOB: '1990-01-01',
+              status: 'REVOKED / BLACKLISTED',
+              officialPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+              address: 'Interpol Alert Node - Watchlist #892',
+              watchlistFlag: true,
+            },
+            discrepancies: [
+              "Identity Mismatch: Card says 'MICHAEL VANCE' but Registry has 'UNKNOWN PERSON'.",
+              "Date of Birth Anomaly: Card has '1982-04-12' vs Registry '1990-01-01'.",
+              'CRITICAL ALERT: Identity is flagged on National Security Watchlist.',
+            ],
+          },
+          databaseCheck: {
+            registryMatch: false,
+            blacklistStatus: 'WATCHLIST_HIT',
+          },
           tamperingAnalysis: {
             confidence: 97.2,
             photoTampered: true,
@@ -164,10 +192,6 @@ export default function BorderScreeningDashboard() {
             livenessScore: 89.1,
             faceMatched: false,
           },
-          databaseCheck: {
-            registryMatch: false,
-            blacklistStatus: 'WATCHLIST_HIT',
-          },
         };
       } else if (isSuspicious) {
         report = {
@@ -187,6 +211,15 @@ export default function BorderScreeningDashboard() {
             mrzCode: 'I<INDR883921104<<<<<<<<<<<<<<<<\n9511037M3005184IND<<<<<<<<<<<8',
             mrzChecksumValid: true,
           },
+          registryComparison: {
+            matchedInDatabase: false,
+            registryRecord: null,
+            discrepancies: ['Notice: Record pending verification in State ID database.'],
+          },
+          databaseCheck: {
+            registryMatch: true,
+            blacklistStatus: 'CLEAR',
+          },
           tamperingAnalysis: {
             confidence: 84.1,
             photoTampered: true,
@@ -204,10 +237,6 @@ export default function BorderScreeningDashboard() {
             similarityScore: 61.2,
             livenessScore: 92.4,
             faceMatched: false,
-          },
-          databaseCheck: {
-            registryMatch: true,
-            blacklistStatus: 'CLEAR',
           },
         };
       } else {
@@ -228,6 +257,22 @@ export default function BorderScreeningDashboard() {
             mrzCode: 'P<INDVERMA<<ROHIT<<<<<<<<<<<<<<<<<<<<<\nP109823414IND9807218M3408142<<<<<<<<<<<<<<04',
             mrzChecksumValid: true,
           },
+          registryComparison: {
+            matchedInDatabase: true,
+            registryRecord: {
+              officialName: 'ROHIT VERMA',
+              officialDOB: '1998-07-21',
+              status: 'ACTIVE',
+              officialPhoto: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
+              address: 'B-42, Vasant Kunj, New Delhi',
+              watchlistFlag: false,
+            },
+            discrepancies: [],
+          },
+          databaseCheck: {
+            registryMatch: true,
+            blacklistStatus: 'CLEAR',
+          },
           tamperingAnalysis: {
             confidence: 99.1,
             photoTampered: false,
@@ -244,10 +289,6 @@ export default function BorderScreeningDashboard() {
             similarityScore: 98.4,
             livenessScore: 99.2,
             faceMatched: true,
-          },
-          databaseCheck: {
-            registryMatch: true,
-            blacklistStatus: 'CLEAR',
           },
         };
       }

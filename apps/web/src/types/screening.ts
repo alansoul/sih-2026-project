@@ -41,7 +41,7 @@ export interface ScanReport {
   };
   databaseCheck?: {
     registryMatch: boolean;
-    blacklistStatus: 'CLEAR' | 'WATCHLIST_HIT' | 'INTERPOL_RED_NOTICE' | string;
+    blacklistStatus: string;
   };
   tamperingAnalysis: {
     confidence: number;
