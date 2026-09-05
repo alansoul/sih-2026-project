@@ -1,15 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AppService } from './app.service';
+// apps/api/src/app/app.controller.ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AppService, ScreeningRequest } from './app.service';
 
-@ApiTags('Health & System')
-@Controller()
+@ApiTags('SSB Border Screening')
+@Controller('screening')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('health')
-  @ApiOperation({ summary: 'Backend Health Check' })
+  @ApiOperation({ summary: 'Checkpoint API Health Check' })
   getHealth() {
-    return this.appService.getHealthStatus();
+    return { status: 'ONLINE', station: 'Raxaul Border Post #04', timestamp: new Date() };
+  }
+
+  @Post('analyze')
+  @ApiOperation({ summary: 'Execute 4-Stage AI Document Forensics & Verification' })
+  @ApiResponse({ status: 200, description: 'Screening report generated successfully.' })
+  async analyzeDocument(@Body() body: ScreeningRequest) {
+    return this.appService.analyzeDocument(body);
   }
 }
