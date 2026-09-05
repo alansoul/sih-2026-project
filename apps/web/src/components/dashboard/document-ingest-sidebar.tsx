@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { FileCheck2, Upload, Search, RefreshCw, Eye, Sparkles, Check, ChevronRight } from 'lucide-react';
+import { FileCheck2, Upload, Search, RefreshCw, Eye, Sparkles, ChevronRight, Hash } from 'lucide-react';
 import { ScanReport } from '../../types/screening';
 
 export interface PresetItem {
@@ -10,6 +10,7 @@ export interface PresetItem {
   type: string;
   url: string;
   category: string;
+  docNumber: string;
 }
 
 interface IngestSidebarProps {
@@ -17,6 +18,8 @@ interface IngestSidebarProps {
   setDocType: (t: string) => void;
   docUrl: string;
   setDocUrl: (u: string) => void;
+  inputDocNumber: string;
+  setInputDocNumber: (n: string) => void;
   presets: PresetItem[];
   loading: boolean;
   scanStep: string;
@@ -32,6 +35,8 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
   setDocType,
   docUrl,
   setDocUrl,
+  inputDocNumber,
+  setInputDocNumber,
   presets,
   loading,
   scanStep,
@@ -48,20 +53,20 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
             <FileCheck2 className="text-blue-600 w-4 h-4" /> Document Ingestion
           </h2>
-          <p className="text-[11px] text-slate-400 mt-0.5 font-medium">Provide passport or visa for optical analysis</p>
+          <p className="text-[11px] text-slate-400 mt-0.5 font-medium">Select a test case or upload your own document</p>
         </div>
         <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
           Ready
         </span>
       </div>
 
-      {/* Noviq style Stepper / Preset Selection */}
+      {/* Preset Test Cases */}
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Evaluation Presets
           </label>
-          <span className="text-[10px] text-slate-400 font-medium">Quick Load</span>
+          <span className="text-[10px] text-slate-400 font-medium">1-Click Test</span>
         </div>
         <div className="grid grid-cols-1 gap-2">
           {presets.map((preset, idx) => {
@@ -72,17 +77,18 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
                 onClick={() => {
                   setDocType(preset.type);
                   setDocUrl(preset.url);
+                  setInputDocNumber(preset.docNumber);
                 }}
-                className={`text-left text-xs p-3 rounded-xl border transition-all flex items-center justify-between ${
+                className={`text-left text-xs p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${
                   isSelected
                     ? 'bg-blue-50/70 border-blue-300 text-blue-950 font-semibold shadow-xs'
                     : 'bg-slate-50/70 border-slate-200 text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-                      isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                      isSelected ? 'bg-blue-600 text-white font-bold' : 'bg-slate-200 text-slate-500'
                     }`}
                   >
                     {idx + 1}
@@ -96,17 +102,35 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
         </div>
       </div>
 
-      {/* Upload Custom File Box */}
+      {/* Custom Upload Dropzone */}
       <div>
         <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">
-          Custom File Upload
+          Upload Real or Tweak-Tested Card
         </label>
         <label className="group flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-blue-400 bg-slate-50/60 hover:bg-blue-50/30 p-3.5 rounded-xl cursor-pointer transition-all">
           <Upload className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors mb-1" />
-          <span className="text-xs text-slate-700 font-medium">Click to upload custom document</span>
-          <span className="text-[10px] text-slate-400 font-mono mt-0.5">JPEG, PNG, WEBP (Max 20MB)</span>
+          <span className="text-xs text-slate-700 font-medium">Upload Aadhaar, Passport, or Visa image</span>
+          <span className="text-[10px] text-slate-400 font-mono mt-0.5">JPEG, PNG up to 20MB</span>
           <input type="file" accept="image/*" onChange={onFileUpload} className="hidden" />
         </label>
+      </div>
+
+      {/* Interactive Number Verifier (Tweak & Test Tool) */}
+      <div>
+        <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+          <span>Target Document Number to Validate</span>
+          <span className="text-[10px] font-mono text-blue-600 font-normal">Edit digit to test tweak</span>
+        </label>
+        <div className="relative">
+          <Hash className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+          <input
+            type="text"
+            value={inputDocNumber}
+            onChange={(e) => setInputDocNumber(e.target.value)}
+            placeholder="e.g., 367598346012 or P10982341"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3 text-xs text-slate-800 font-mono focus:border-blue-500 outline-none transition-colors"
+          />
+        </div>
       </div>
 
       {/* Document Classification */}
@@ -119,14 +143,14 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
           onChange={(e) => setDocType(e.target.value)}
           className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 outline-none focus:border-blue-500 font-medium transition-colors cursor-pointer"
         >
+          <option value="NATIONAL_ID">National ID (Aadhaar / Voter ID)</option>
           <option value="PASSPORT">Passport (ICAO Doc 9303 Standard)</option>
           <option value="VISA">Entry / Transit Consular Visa</option>
-          <option value="NATIONAL_ID">National ID (Aadhaar / Voter ID)</option>
           <option value="DRIVING_LICENSE">Driving Permit / Border Card</option>
         </select>
       </div>
 
-      {/* Document Image Optical Preview */}
+      {/* Visual Sensor Feed Preview */}
       <div>
         <div className="flex justify-between items-center mb-1.5">
           <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
@@ -135,26 +159,26 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
           {selectedScan && selectedScan.tamperingAnalysis.tamperedBoxes.length > 0 && (
             <button
               onClick={() => setShowHeatmap(!showHeatmap)}
-              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 shadow-xs ${
+              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${
                 showHeatmap
                   ? 'bg-rose-50 text-rose-700 border-rose-200'
                   : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
               }`}
             >
               <Eye className="w-3 h-3" />
-              {showHeatmap ? 'Hide ELA Overlay' : 'View ELA Forensic Map'}
+              {showHeatmap ? 'Hide ELA Forensic Map' : 'View ELA Forensic Map'}
             </button>
           )}
         </div>
 
-        <div className="relative border border-slate-200 bg-slate-50 rounded-xl p-2.5 flex flex-col items-center justify-center overflow-hidden min-h-48">
+        <div className="relative border border-slate-200 bg-slate-50 rounded-xl p-2.5 flex flex-col items-center justify-center overflow-hidden min-h-44">
           <img
             src={docUrl}
-            alt="Document Visual Stream"
-            className="max-h-48 w-full object-contain rounded-lg border border-slate-200/80 bg-white"
+            alt="Document Visual Feed"
+            className="max-h-44 w-full object-contain rounded-lg border border-slate-200/80 bg-white"
           />
 
-          {/* Forensic Bounding Boxes */}
+          {/* Forensic Heatmap Bounding Boxes */}
           {showHeatmap &&
             selectedScan &&
             selectedScan.tamperingAnalysis.tamperedBoxes.map((box, idx) => (
@@ -174,12 +198,12 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
               </div>
             ))}
           <p className="text-[10px] text-slate-400 mt-2 font-mono text-center">
-            {showHeatmap ? '⚠️ Error Level Analysis (ELA) Splicing Detection Active' : 'Sensor Stream: 1920x1080 • Standard RGB'}
+            {showHeatmap ? '⚠️ Error Level Analysis (ELA) Splicing Detection Active' : 'Sensor Stream: 1920x1080 • Calibrated RGB'}
           </p>
         </div>
       </div>
 
-      {/* Execute Pipeline Action Button */}
+      {/* Execute Scan Button */}
       <button
         onClick={onScan}
         disabled={loading}
