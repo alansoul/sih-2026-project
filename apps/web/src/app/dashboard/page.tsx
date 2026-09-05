@@ -172,21 +172,22 @@ export default function BorderScreeningDashboard() {
     await new Promise((r) => setTimeout(r, 350));
     setScanStep('Stage 4/4: UIDAI / Central Registry Cross-Check...');
     await new Promise((r) => setTimeout(r, 300));
-
-    // Mathematical verification check
+// Dynamic checks
     const isAadhaar = docType === 'NATIONAL_ID';
     const cleanNum = inputDocNumber.replace(/\D/g, '');
+    const isCustomUpload = docUrl.startsWith('data:');
 
-    // Preset 1 is verified genuine, or run general Verhoeff algorithm
-    const isGenuinePresetNumber = cleanNum === '234123412346';
-    const isVerhoeffValid = isAadhaar
-      ? (isGenuinePresetNumber || checkVerhoeff(cleanNum))
-      : true;
+    // 1. Verhoeff Check: Runs pure mathematical validation on any 12-digit number
+    const isVerhoeffValid = isAadhaar ? checkVerhoeff(cleanNum) : true;
     
-    // Official registry baseline
-    const registeredName = isAadhaar ? 'AARAV SHARMA' : 'ROHIT VERMA';
+    // 2. Name check: For presets, compare against registered name; for custom uploads, check if user modified it
+    const registeredName = isCustomUpload ? inputFullName.trim().toUpperCase() : (isAadhaar ? 'AARAV SHARMA' : 'ROHIT VERMA');
     const enteredCleanName = inputFullName.trim().toUpperCase();
-    const isNameAltered = enteredCleanName !== registeredName && enteredCleanName !== 'MICHAEL VANCE';
+    
+    // In preset mode, check if name differs from registry; in custom mode, check for alteration markers
+    const isNameAltered = !isCustomUpload 
+      ? (enteredCleanName !== registeredName && enteredCleanName !== 'MICHAEL VANCE')
+      : (enteredCleanName.includes('(ALTERED)') || enteredCleanName.includes('MODIFIED'));
 
     const isVisaFraud = docType === 'VISA' || inputDocNumber.includes('49920194');
     const isFraudDetected = !isVerhoeffValid || isNameAltered || isVisaFraud;
@@ -194,11 +195,11 @@ export default function BorderScreeningDashboard() {
     const discrepancies: string[] = [];
 
     if (!isVerhoeffValid && isAadhaar) {
-      discrepancies.push(`CRITICAL ERROR: Number '${inputDocNumber}' failed the mathematical Verhoeff checksum algorithm.`);
+      discrepancies.push(`CRITICAL ERROR: Aadhaar Number '${inputDocNumber}' failed the mathematical Verhoeff checksum algorithm.`);
     }
 
     if (isNameAltered) {
-      discrepancies.push(`SINGLE-CHARACTER NAME TAMPERING: Credential shows '${inputFullName}', but Central Registry has '${registeredName}'.`);
+      discrepancies.push(`SINGLE-CHARACTER NAME TAMPERING: Credential name '${inputFullName}' does not match Central Registry record.`);
     }
 
     if (isVisaFraud) {
