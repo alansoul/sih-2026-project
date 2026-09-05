@@ -72,7 +72,7 @@ export const ForensicsDisplay: React.FC<ForensicsDisplayProps> = ({
           </p>
         </div>
 
-        <div className="bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-xs text-right min-w-[120px]">
+        <div className="bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-xs text-right min-w-30">
           <span className="text-[10px] text-slate-400 uppercase font-semibold block">AI Risk Score</span>
           <div
             className={`text-3xl font-black tracking-tight ${
