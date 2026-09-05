@@ -1,15 +1,20 @@
 // apps/web/src/middleware.ts
-import { clerkMiddleware } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default clerkMiddleware();
+export function middleware(request: NextRequest) {
+  // If Clerk appends the handshake query that crashes Vercel Edge, strip it cleanly
+  if (request.nextUrl.searchParams.has('__clerk_handshake')) {
+    const cleanUrl = new URL(request.nextUrl.pathname, request.url);
+    return NextResponse.redirect(cleanUrl);
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-    // Required for Clerk handshake on deployed domains
-    '/__clerk/(.*)',
+    // Run on all page routes, skip static assets
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
