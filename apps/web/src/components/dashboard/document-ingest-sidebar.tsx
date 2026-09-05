@@ -2,7 +2,18 @@
 'use client';
 
 import React from 'react';
-import { FileCheck2, Upload, Search, RefreshCw, Eye, Sparkles, ChevronRight, Hash, User } from 'lucide-react';
+import {
+  FileCheck2,
+  Upload,
+  Search,
+  RefreshCw,
+  Eye,
+  Sparkles,
+  ChevronRight,
+  Hash,
+  User,
+  Zap,
+} from 'lucide-react';
 import { ScanReport } from '../../types/screening';
 
 export interface PresetItem {
@@ -32,6 +43,7 @@ interface IngestSidebarProps {
   setShowHeatmap: (v: boolean) => void;
   selectedScan: ScanReport | null;
   onSelectPreset: (preset: PresetItem) => void;
+  isCustomCard?: boolean;
 }
 
 export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
@@ -51,9 +63,11 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
   setShowHeatmap,
   selectedScan,
   onSelectPreset,
+  isCustomCard,
 }) => {
   return (
     <section className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      {/* Header */}
       <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
         <div>
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
@@ -76,10 +90,11 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-2">
           {presets.map((preset, idx) => {
-            const isSelected = docUrl === preset.url;
+            const isSelected = !isCustomCard && docUrl === preset.url;
             return (
               <button
                 key={idx}
+                type="button"
                 onClick={() => onSelectPreset(preset)}
                 className={`text-left text-xs p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${
                   isSelected
@@ -117,6 +132,31 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
         </label>
       </div>
 
+      {/* 2.5 Active Banner when Custom File is Uploaded */}
+      {isCustomCard && (
+        <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-xl flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-blue-600" /> Custom Card Ingested
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                // Auto-fills with the details from your uploaded Aadhaar card
+                setInputFullName('ROHAN BHANDARI');
+                setInputDocNumber('632476606223');
+              }}
+              className="text-[10px] font-bold bg-blue-600 text-white px-2.5 py-1 rounded-lg hover:bg-blue-700 transition-all cursor-pointer shadow-xs"
+            >
+              Auto-Fill My Details
+            </button>
+          </div>
+          <p className="text-[11px] text-blue-700 leading-tight">
+            Review or edit your Name and 12-digit number below, then click Execute Screening.
+          </p>
+        </div>
+      )}
+
       {/* 3. Interactive Bearer Name (Test Changing 1 Letter) */}
       <div>
         <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
@@ -129,7 +169,7 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
             type="text"
             value={inputFullName}
             onChange={(e) => setInputFullName(e.target.value)}
-            placeholder="e.g., AARAV SHARMA"
+            placeholder="Enter cardholder name"
             className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3 text-xs text-slate-800 font-semibold focus:border-blue-500 outline-none transition-colors"
           />
         </div>
@@ -147,7 +187,7 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
             type="text"
             value={inputDocNumber}
             onChange={(e) => setInputDocNumber(e.target.value)}
-            placeholder="e.g., 367598346012"
+            placeholder="Enter 12-digit Aadhaar / Passport number"
             className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3 text-xs text-slate-800 font-mono font-bold focus:border-blue-500 outline-none transition-colors"
           />
         </div>
@@ -178,6 +218,7 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
           </label>
           {selectedScan && selectedScan.tamperingAnalysis.tamperedBoxes.length > 0 && (
             <button
+              type="button"
               onClick={() => setShowHeatmap(!showHeatmap)}
               className={`text-[10px] font-medium px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${
                 showHeatmap
@@ -198,7 +239,7 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
             className="max-h-48 w-full object-contain rounded-lg border border-slate-200/80 bg-white shadow-xs"
           />
 
-          {/* Forensic Bounding Boxes */}
+          {/* Forensic Heatmap Bounding Boxes */}
           {showHeatmap &&
             selectedScan &&
             selectedScan.tamperingAnalysis.tamperedBoxes.map((box, idx) => (
@@ -218,13 +259,16 @@ export const DocumentIngestSidebar: React.FC<IngestSidebarProps> = ({
               </div>
             ))}
           <p className="text-[10px] text-slate-400 mt-2 font-mono text-center">
-            {showHeatmap ? '⚠️ Error Level Analysis (ELA) Splicing Anomaly Detected' : 'Optical Resolution: 1920x1080 • Calibrated RGB'}
+            {showHeatmap
+              ? '⚠️ Error Level Analysis (ELA) Splicing Anomaly Detected'
+              : 'Optical Resolution: 1920x1080 • Calibrated RGB'}
           </p>
         </div>
       </div>
 
       {/* 7. Scan Button */}
       <button
+        type="button"
         onClick={onScan}
         disabled={loading}
         className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 text-xs tracking-wide cursor-pointer"

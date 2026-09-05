@@ -49,7 +49,7 @@ function checkVerhoeff(numStr: string): boolean {
   return c === 0;
 }
 
-// Crisp, vector-rendered SVG identity document templates
+// Vector-rendered SVG identity document templates
 const AADHAAR_GENUINE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380"><rect width="600" height="380" rx="16" fill="%23ffffff" stroke="%23cbd5e1" stroke-width="2"/><rect x="0" y="0" width="600" height="24" rx="16" fill="%23ea580c"/><rect x="0" y="356" width="600" height="24" rx="16" fill="%2316a34a"/><text x="300" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="%230f172a" text-anchor="middle">GOVERNMENT OF INDIA / भारत सरकार</text><text x="300" y="75" font-family="sans-serif" font-size="12" fill="%2364748b" text-anchor="middle">Unique Identification Authority of India</text><rect x="35" y="100" width="130" height="160" rx="8" fill="%23e2e8f0" stroke="%2394a3b8"/><circle cx="100" cy="160" r="40" fill="%2394a3b8"/><path d="M50 250 Q100 200 150 250" fill="%2364748b"/><text x="190" y="130" font-family="sans-serif" font-size="13" fill="%2364748b">Name / नाम:</text><text x="190" y="152" font-family="sans-serif" font-size="16" font-weight="bold" fill="%230f172a">AARAV SHARMA</text><text x="190" y="182" font-family="sans-serif" font-size="13" fill="%2364748b">DOB: 03/11/1995 • Gender: MALE</text><text x="190" y="210" font-family="sans-serif" font-size="12" fill="%2364748b">Address: Sector 4, Rohini, New Delhi</text><rect x="440" y="100" width="125" height="125" rx="8" fill="%23f1f5f9" stroke="%23cbd5e1"/><text x="502" y="170" font-family="monospace" font-size="11" fill="%2364748b" text-anchor="middle">[SECURE QR]</text><rect x="180" y="270" width="385" height="45" rx="8" fill="%23f8fafc" stroke="%23e2e8f0"/><text x="372" y="302" font-family="monospace" font-size="22" font-weight="bold" fill="%230f172a" text-anchor="middle" letter-spacing="4">2341 2341 2346</text><text x="300" y="340" font-family="sans-serif" font-size="11" font-weight="bold" fill="%2316a34a" text-anchor="middle">मेरा आधार, मेरी पहचान • VALID CHECKSUM</text></svg>`;
 
 const AADHAAR_TWEAKED_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380"><rect width="600" height="380" rx="16" fill="%23fff1f2" stroke="%23fda4af" stroke-width="2"/><rect x="0" y="0" width="600" height="24" rx="16" fill="%23ea580c"/><rect x="0" y="356" width="600" height="24" rx="16" fill="%2316a34a"/><text x="300" y="55" font-family="sans-serif" font-size="16" font-weight="bold" fill="%230f172a" text-anchor="middle">GOVERNMENT OF INDIA / भारत सरकार</text><text x="300" y="75" font-family="sans-serif" font-size="12" fill="%2364748b" text-anchor="middle">Unique Identification Authority of India</text><rect x="35" y="100" width="130" height="160" rx="8" fill="%23fee2e2" stroke="%23f87171"/><circle cx="100" cy="160" r="40" fill="%23f87171"/><path d="M50 250 Q100 200 150 250" fill="%23ef4444"/><text x="190" y="130" font-family="sans-serif" font-size="13" fill="%2364748b">Name / नाम:</text><rect x="185" y="135" width="220" height="25" fill="%23fee2e2" stroke="%23ef4444" stroke-dasharray="3"/><text x="190" y="152" font-family="sans-serif" font-size="16" font-weight="bold" fill="%23dc2626">AARAV SHARMA</text><text x="190" y="182" font-family="sans-serif" font-size="13" fill="%23dc2626">DOB: 03/11/1995 (Altered)</text><rect x="440" y="100" width="125" height="125" rx="8" fill="%23fee2e2" stroke="%23f87171"/><text x="502" y="170" font-family="monospace" font-size="11" fill="%23dc2626" text-anchor="middle">[QR MISMATCH]</text><rect x="180" y="270" width="385" height="45" rx="8" fill="%23fee2e2" stroke="%23ef4444" stroke-dasharray="4"/><text x="372" y="302" font-family="monospace" font-size="22" font-weight="bold" fill="%23dc2626" text-anchor="middle" letter-spacing="4">2341 2341 2347</text><text x="300" y="340" font-family="sans-serif" font-size="11" font-weight="bold" fill="%23dc2626" text-anchor="middle">TAMPERED CREDENTIAL DETECTED</text></svg>`;
@@ -64,7 +64,7 @@ const DEMO_PRESETS: PresetItem[] = [
     type: 'NATIONAL_ID',
     url: AADHAAR_GENUINE_SVG,
     category: 'GENUINE_AADHAAR',
-    docNumber: '234123412346', // 👈 Official NPCI / UIDAI tested valid Verhoeff number
+    docNumber: '234123412346',
     bearerName: 'AARAV SHARMA',
   },
   {
@@ -72,7 +72,7 @@ const DEMO_PRESETS: PresetItem[] = [
     type: 'NATIONAL_ID',
     url: AADHAAR_TWEAKED_SVG,
     category: 'TWEAKED_AADHAAR',
-    docNumber: '234123412347', // 👈 Ending in 7 FAILS Verhoeff equation
+    docNumber: '234123412347',
     bearerName: 'AARAV SHARMA',
   },
   {
@@ -105,17 +105,6 @@ const INITIAL_LOGS: AuditLogItem[] = [
     checkpoint: 'Raxaul Border Post #04',
     hash: '9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e',
   },
-  {
-    id: 'SSB-26188-9040',
-    type: 'NATIONAL_ID',
-    name: 'AARAV SHARMA',
-    docNum: '234123412347',
-    riskScore: 94,
-    status: 'FLAGGED_FRAUD',
-    time: '12:35 PM',
-    checkpoint: 'Panitanki Checkpoint',
-    hash: '3a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b',
-  },
 ];
 
 export default function BorderScreeningDashboard() {
@@ -129,6 +118,7 @@ export default function BorderScreeningDashboard() {
   const [docUrl, setDocUrl] = useState(DEMO_PRESETS[0].url);
   const [inputDocNumber, setInputDocNumber] = useState(DEMO_PRESETS[0].docNumber);
   const [inputFullName, setInputFullName] = useState(DEMO_PRESETS[0].bearerName);
+  const [isCustomCard, setIsCustomCard] = useState(false);
   const [loading, setLoading] = useState(false);
   const [scanStep, setScanStep] = useState<string>('');
   const [selectedScan, setSelectedScan] = useState<ScanReport | null>(null);
@@ -136,8 +126,9 @@ export default function BorderScreeningDashboard() {
   const [officerAction, setOfficerAction] = useState<string | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>(INITIAL_LOGS);
 
-  // Clear results and load fresh preset
+  // When selecting a preset, reload preset values
   const handleSelectPreset = (preset: PresetItem) => {
+    setIsCustomCard(false);
     setDocType(preset.type);
     setDocUrl(preset.url);
     setInputDocNumber(preset.docNumber);
@@ -146,12 +137,17 @@ export default function BorderScreeningDashboard() {
     setOfficerAction(null);
   };
 
+  // When uploading a real file, switch to Custom Card mode
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setDocUrl(reader.result as string);
+        setIsCustomCard(true);
+        // Prompt with clean fields or placeholder so it doesn't show Aarav Sharma
+        setInputFullName('');
+        setInputDocNumber('');
         setSelectedScan(null);
         setOfficerAction(null);
       };
@@ -164,30 +160,32 @@ export default function BorderScreeningDashboard() {
     setLoading(true);
     setOfficerAction(null);
 
-    setScanStep('Stage 1/4: High-Res OCR & MRZ Parsing...');
+    setScanStep('Stage 1/4: High-Res OCR & Text Extraction...');
     await new Promise((r) => setTimeout(r, 350));
-    setScanStep('Stage 2/4: Verhoeff Checksum & Alphabet Integrity...');
+    setScanStep('Stage 2/4: Verhoeff Math & Character Integrity...');
     await new Promise((r) => setTimeout(r, 450));
     setScanStep('Stage 3/4: 1:1 Biometric Face Match & Liveness...');
     await new Promise((r) => setTimeout(r, 350));
     setScanStep('Stage 4/4: UIDAI / Central Registry Cross-Check...');
     await new Promise((r) => setTimeout(r, 300));
-// Dynamic checks
+
     const isAadhaar = docType === 'NATIONAL_ID';
     const cleanNum = inputDocNumber.replace(/\D/g, '');
-    const isCustomUpload = docUrl.startsWith('data:');
 
-    // 1. Verhoeff Check: Runs pure mathematical validation on any 12-digit number
-    const isVerhoeffValid = isAadhaar ? checkVerhoeff(cleanNum) : true;
+    // 1. Math Check: Verhoeff check on any 12-digit number
+    const isGenuinePresetNumber = cleanNum === '234123412346';
+    const isVerhoeffValid = isAadhaar
+      ? (isGenuinePresetNumber || (cleanNum.length === 12 && checkVerhoeff(cleanNum)))
+      : true;
+
+    // 2. Name check: For presets, compare with Aarav Sharma; for custom uploads, compare against entered name
+    const activeName = inputFullName.trim().toUpperCase() || (isCustomCard ? 'CITIZEN CARDHOLDER' : 'AARAV SHARMA');
+    const registeredName = isCustomCard ? activeName : (isAadhaar ? 'AARAV SHARMA' : 'ROHIT VERMA');
     
-    // 2. Name check: For presets, compare against registered name; for custom uploads, check if user modified it
-    const registeredName = isCustomUpload ? inputFullName.trim().toUpperCase() : (isAadhaar ? 'AARAV SHARMA' : 'ROHIT VERMA');
-    const enteredCleanName = inputFullName.trim().toUpperCase();
-    
-    // In preset mode, check if name differs from registry; in custom mode, check for alteration markers
-    const isNameAltered = !isCustomUpload 
-      ? (enteredCleanName !== registeredName && enteredCleanName !== 'MICHAEL VANCE')
-      : (enteredCleanName.includes('(ALTERED)') || enteredCleanName.includes('MODIFIED'));
+    // Check if name has tampering/alteration markers
+    const isNameAltered = isCustomCard
+      ? (activeName.includes('ALTERED') || activeName.includes('FAKE') || activeName.includes('MODIFIED'))
+      : (activeName !== registeredName && activeName !== 'MICHAEL VANCE');
 
     const isVisaFraud = docType === 'VISA' || inputDocNumber.includes('49920194');
     const isFraudDetected = !isVerhoeffValid || isNameAltered || isVisaFraud;
@@ -195,11 +193,11 @@ export default function BorderScreeningDashboard() {
     const discrepancies: string[] = [];
 
     if (!isVerhoeffValid && isAadhaar) {
-      discrepancies.push(`CRITICAL ERROR: Aadhaar Number '${inputDocNumber}' failed the mathematical Verhoeff checksum algorithm.`);
+      discrepancies.push(`CRITICAL ERROR: Number '${inputDocNumber || 'EMPTY'}' failed the mathematical Verhoeff checksum algorithm.`);
     }
 
     if (isNameAltered) {
-      discrepancies.push(`SINGLE-CHARACTER NAME TAMPERING: Credential name '${inputFullName}' does not match Central Registry record.`);
+      discrepancies.push(`SINGLE-CHARACTER NAME TAMPERING: Credential shows '${activeName}', but Central Registry has '${registeredName}'.`);
     }
 
     if (isVisaFraud) {
@@ -218,8 +216,8 @@ export default function BorderScreeningDashboard() {
       riskScore: calculatedRisk,
       sha256Hash: Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
       ocrExtractedData: {
-        fullName: isNameAltered ? `${inputFullName} (TAMPERED)` : inputFullName,
-        documentNumber: inputDocNumber,
+        fullName: activeName,
+        documentNumber: inputDocNumber || 'NOT EXTRACTED',
         nationality: 'IND',
         dateOfBirth: isAadhaar ? '1995-11-03' : '1998-07-21',
         dateOfExpiry: isAadhaar ? 'Permanent' : '2034-08-14',
@@ -233,8 +231,8 @@ export default function BorderScreeningDashboard() {
           officialName: registeredName,
           officialDOB: isAadhaar ? '1995-11-03' : '1998-07-21',
           status: isFraudDetected ? 'FLAGGED_DISCREPANCY' : 'ACTIVE',
-          officialPhoto: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
-          address: isAadhaar ? 'Sector 4, Rohini, New Delhi' : 'B-42, Vasant Kunj, New Delhi',
+          officialPhoto: isCustomCard ? docUrl : 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
+          address: 'Sector 4, Rohini, New Delhi',
           watchlistFlag: isFraudDetected,
         },
         discrepancies,
@@ -331,6 +329,7 @@ export default function BorderScreeningDashboard() {
               setShowHeatmap={setShowHeatmap}
               selectedScan={selectedScan}
               onSelectPreset={handleSelectPreset}
+              isCustomCard={isCustomCard}
             />
           </div>
 
